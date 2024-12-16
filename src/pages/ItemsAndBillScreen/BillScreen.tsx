@@ -3,9 +3,13 @@ import { useState } from "react";
 import { MenuItem, OrderItem } from "./types";
 import { useToast } from "@/components/ui/use-toast";
 
-const BillScreen = () => {
+interface BillScreenProps {
+  orderItems: OrderItem[];
+  setOrderItems: React.Dispatch<React.SetStateAction<OrderItem[]>>;
+}
+
+const BillScreen = ({ orderItems, setOrderItems }: BillScreenProps) => {
   const [showInvoice, setShowInvoice] = useState(false);
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const { toast } = useToast();
 
   const handleIncrement = (item: OrderItem) => {

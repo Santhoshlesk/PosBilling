@@ -6,7 +6,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const ItemsScreen = () => {
+interface ItemsScreenProps {
+  onAddToOrder: (item: MenuItem) => void;
+}
+
+const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
   const [selectedCategory, setSelectedCategory] = useState<Category["id"]>("all");
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [newProduct, setNewProduct] = useState<Partial<MenuItem>>({
@@ -78,7 +82,7 @@ const ItemsScreen = () => {
           <ProductCard
             key={item.id}
             product={item}
-            onAddToOrder={() => {/* Add to order function will be passed from parent */}}
+            onAddToOrder={onAddToOrder}
           />
         ))}
       </div>
