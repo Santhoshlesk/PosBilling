@@ -1,31 +1,64 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
-import { OrderItem } from "./types";
+import { MenuItem, OrderItem } from "./types";
+import { useToast } from "@/components/ui/use-toast";
 
 const BillScreen = () => {
   const [showInvoice, setShowInvoice] = useState(false);
-  const [orderItems] = useState<OrderItem[]>([
-    {
-      id: "1",
-      name: "Stuffed flank steak",
-      weight: "300g",
-      price: 13.50,
-      quantity: 2,
-      image: "https://source.unsplash.com/4u_nRgiLW3M/600x600"
-    },
-    {
-      id: "2",
-      name: "Grilled Corn",
-      weight: "150g",
-      price: 3.50,
-      quantity: 10,
-      image: "https://source.unsplash.com/sc5sTPMrVfk/600x600"
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const { toast } = useToast();
+
+  const handleIncrement = (item: OrderItem) => {
+    const updatedItems = orderItems.map((orderItem) => {
+      if (orderItem.id === item.id) {
+        if (orderItem.quantity < orderItem.inventory) {
+          return { ...orderItem, quantity: orderItem.quantity + 1 };
+        }
+        toast({
+          variant: "destructive",
+          title: "Maximum stock reached",
+          description: `Only ${orderItem.inventory} ${orderItem.name} available`,
+        });
+        return orderItem;
+      }
+      return orderItem;
+    });
+    setOrderItems(updatedItems);
+  };
+
+  const handleDecrement = (item: OrderItem) => {
+    const updatedItems = orderItems.map((orderItem) => {
+      if (orderItem.id === item.id) {
+        if (orderItem.quantity > 1) {
+          return { ...orderItem, quantity: orderItem.quantity - 1 };
+        }
+        return null;
+      }
+      return orderItem;
+    }).filter((item): item is OrderItem => item !== null);
+    setOrderItems(updatedItems);
+  };
+
+  const handleClearAll = () => {
+    setOrderItems([]);
+    toast({
+      title: "Order cleared",
+      description: "All items have been removed from the order",
+    });
+  };
+
+  const addToOrder = (item: MenuItem) => {
+    const existingItem = orderItems.find((orderItem) => orderItem.id === item.id);
+    if (existingItem) {
+      handleIncrement(existingItem);
+    } else {
+      setOrderItems([...orderItems, { ...item, quantity: 1 }]);
     }
-  ]);
+  };
 
   const subtotal = orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const discount = 5.00;
-  const tax = subtotal * 0.0638; // 6.38% tax rate
+  const tax = subtotal * 0.0638;
   const total = subtotal - discount + tax;
 
   return (

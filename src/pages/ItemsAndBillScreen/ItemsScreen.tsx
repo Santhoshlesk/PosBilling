@@ -1,9 +1,40 @@
 import { useState } from "react";
 import { categories, menuItems } from "./data";
-import { Category } from "./types";
+import { Category, MenuItem } from "./types";
+import ProductCard from "./components/ProductCard";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const ItemsScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category["id"]>("all");
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [newProduct, setNewProduct] = useState<Partial<MenuItem>>({
+    name: "",
+    weight: "",
+    price: 0,
+    inventory: 0,
+    category: "bakery",
+    image: ""
+  });
+
+  const filteredItems = menuItems.filter(
+    (item) => selectedCategory === "all" || item.category === selectedCategory
+  );
+
+  const handleAddProduct = () => {
+    // In a real app, this would make an API call
+    console.log("Adding new product:", newProduct);
+    setShowAddProduct(false);
+    setNewProduct({
+      name: "",
+      weight: "",
+      price: 0,
+      inventory: 0,
+      category: "bakery",
+      image: ""
+    });
+  };
 
   return (
     <div className="w-full lg:w-3/5 h-full shadow-lg">
@@ -12,15 +43,16 @@ const ItemsScreen = () => {
           <div className="font-bold text-xl">Sethu Raman G</div>
           <span className="text-xs">Location ID#SIMON123</span>
         </div>
-        <div className="flex items-center">
-          <div className="text-sm text-center mr-4">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowAddProduct(true)}
+            className="px-4 py-2 bg-yellow-500 text-white font-semibold rounded hover:bg-yellow-600"
+          >
+            Add Product
+          </button>
+          <div className="text-sm text-center">
             <div className="font-light text-gray-500">last synced</div>
             <span className="font-semibold">3 mins ago</span>
-          </div>
-          <div>
-            <span className="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded">
-              Help
-            </span>
           </div>
         </div>
       </div>
@@ -42,30 +74,64 @@ const ItemsScreen = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5 mt-5 overflow-y-auto h-3/4">
-        {menuItems.map((item) => (
-          <div
+        {filteredItems.map((item) => (
+          <ProductCard
             key={item.id}
-            className="px-3 py-3 flex flex-col border border-gray-200 rounded-md h-32 justify-between"
-          >
-            <div>
-              <div className="font-bold text-gray-800">{item.name}</div>
-              <span className="font-light text-sm text-gray-400">
-                {item.weight}
-              </span>
-            </div>
-            <div className="flex flex-row justify-between items-center">
-              <span className="self-end font-bold text-lg text-yellow-500">
-                ${item.price.toFixed(2)}
-              </span>
-              <img
-                src={item.image}
-                className="h-14 w-14 object-cover rounded-md"
-                alt={item.name}
-              />
-            </div>
-          </div>
+            product={item}
+            onAddToOrder={() => {/* Add to order function will be passed from parent */}}
+          />
         ))}
       </div>
+
+      <Dialog open={showAddProduct} onOpenChange={setShowAddProduct}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Product</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Name</label>
+              <Input
+                value={newProduct.name}
+                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Weight</label>
+              <Input
+                value={newProduct.weight}
+                onChange={(e) => setNewProduct({ ...newProduct, weight: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Price</label>
+              <Input
+                type="number"
+                value={newProduct.price}
+                onChange={(e) => setNewProduct({ ...newProduct, price: Number(e.target.value) })}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Initial Inventory</label>
+              <Input
+                type="number"
+                value={newProduct.inventory}
+                onChange={(e) => setNewProduct({ ...newProduct, inventory: Number(e.target.value) })}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Image URL</label>
+              <Input
+                value={newProduct.image}
+                onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+              />
+            </div>
+            <Button onClick={handleAddProduct} className="w-full">
+              Add Product
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

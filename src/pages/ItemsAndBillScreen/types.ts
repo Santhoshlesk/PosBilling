@@ -4,6 +4,8 @@ export interface MenuItem {
   weight: string;
   price: number;
   image: string;
+  inventory: number;
+  category: string;
 }
 
 export interface OrderItem extends MenuItem {
