@@ -2,7 +2,7 @@ import { useState } from "react";
 import { categories, menuItems } from "./data";
 import { Category, MenuItem } from "./types";
 import ProductCard from "./components/ProductCard";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -27,7 +27,6 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
   );
 
   const handleAddProduct = () => {
-    // In a real app, this would make an API call
     console.log("Adding new product:", newProduct);
     setShowAddProduct(false);
     setNewProduct({
@@ -41,8 +40,8 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
   };
 
   return (
-    <div className="w-full lg:w-3/5 h-full shadow-lg">
-      <div className="flex flex-row justify-between items-center px-5 mt-5">
+    <div className="w-full lg:w-3/5 h-full flex flex-col">
+      <div className="flex flex-row justify-between items-center px-5 py-4">
         <div className="text-gray-800">
           <div className="font-bold text-xl">Sethu Raman G</div>
           <span className="text-xs">Location ID#SIMON123</span>
@@ -61,11 +60,11 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
         </div>
       </div>
 
-      <div className="mt-5 flex flex-row px-5 overflow-x-auto">
+      <div className="flex flex-row px-5 overflow-x-auto py-4 gap-4">
         {categories.map((category) => (
           <span
             key={category.id}
-            className={`px-5 py-1 rounded-2xl text-sm mr-4 cursor-pointer whitespace-nowrap ${
+            className={`px-5 py-1 rounded-2xl text-sm cursor-pointer whitespace-nowrap ${
               selectedCategory === category.id
                 ? "bg-yellow-500 text-white"
                 : "font-semibold"
@@ -77,7 +76,7 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5 mt-5 overflow-y-auto h-3/4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5 overflow-y-auto flex-grow">
         {filteredItems.map((item) => (
           <ProductCard
             key={item.id}
@@ -91,6 +90,9 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Product</DialogTitle>
+            <DialogDescription>
+              Fill in the product details below to add a new item to your inventory.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -130,7 +132,7 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
                 onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
               />
             </div>
-            <Button onClick={handleAddProduct} className="w-full">
+            <Button onClick={handleAddProduct} className="w-full bg-primary hover:bg-primary/90">
               Add Product
             </Button>
           </div>

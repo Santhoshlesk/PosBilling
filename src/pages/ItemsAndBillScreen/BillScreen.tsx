@@ -66,20 +66,23 @@ const BillScreen = ({ orderItems, setOrderItems }: BillScreenProps) => {
   const total = subtotal - discount + tax;
 
   return (
-    <div className="w-full lg:w-2/5 flex flex-col">
-      <div className="flex flex-row items-center justify-between px-4 mt-5">
+    <div className="w-full lg:w-2/5 flex flex-col h-full">
+      <div className="flex flex-row items-center justify-between px-4 py-4">
         <div className="font-bold text-xl">Current Order</div>
         <div className="font-semibold">
-          <span className="px-4 py-2 rounded-md bg-red-100 text-red-500 cursor-pointer">
+          <button 
+            onClick={handleClearAll}
+            className="px-4 py-2 rounded-md bg-red-100 text-red-500 cursor-pointer hover:bg-red-200"
+          >
             Clear All
-          </span>
+          </button>
           <span className="px-4 py-2 rounded-md bg-gray-100 text-gray-800 ml-2 cursor-pointer">
             Setting
           </span>
         </div>
       </div>
 
-      <div className="px-4 py-4 mt-5 flex-grow overflow-y-auto h-64">
+      <div className="px-4 py-4 flex-grow overflow-y-auto">
         {orderItems.map((item) => (
           <div key={item.id} className="flex flex-row justify-between items-center mb-4">
             <div className="flex flex-row items-center w-2/5">
@@ -91,9 +94,19 @@ const BillScreen = ({ orderItems, setOrderItems }: BillScreenProps) => {
               <span className="ml-4 font-semibold text-sm">{item.name}</span>
             </div>
             <div className="w-32 flex justify-between">
-              <span className="px-3 py-1 rounded-md bg-gray-300 cursor-pointer">-</span>
+              <button 
+                onClick={() => handleDecrement(item)}
+                className="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 cursor-pointer"
+              >
+                -
+              </button>
               <span className="font-semibold mx-4">{item.quantity}</span>
-              <span className="px-3 py-1 rounded-md bg-gray-300 cursor-pointer">+</span>
+              <button 
+                onClick={() => handleIncrement(item)}
+                className="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 cursor-pointer"
+              >
+                +
+              </button>
             </div>
             <div className="font-semibold text-lg w-16 text-center">
               ${(item.price * item.quantity).toFixed(2)}
