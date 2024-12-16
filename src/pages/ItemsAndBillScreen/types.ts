@@ -1,0 +1,16 @@
+export interface MenuItem {
+  id: string;
+  name: string;
+  weight: string;
+  price: number;
+  image: string;
+}
+
+export interface OrderItem extends MenuItem {
+  quantity: number;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+}
