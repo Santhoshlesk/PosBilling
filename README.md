@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: https://santhoshlesk.github.com/PosBilling
+**URL**: https://santhoshlesk.github.io/PosBilling
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.

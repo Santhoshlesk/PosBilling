@@ -1,14 +1,15 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import { Toaster } from "sonner";
 
 const App = () => (
     <TooltipProvider>
       <Toaster />
-      <BrowserRouter>
+      <BrowserRouter  >
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route index  element={<Navigate to={'/PosBilling'} replace />} />
+          <Route path="/PosBilling" element={<Index />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
