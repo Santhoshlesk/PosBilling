@@ -52,7 +52,7 @@ export const menuItems: MenuItem[] = [
     price: 7.00,
     inventory: 20,
     category: "food",
-    image: "https://source.unsplash.com/sc5sTPMrVfk/600x500"
+    image: "https://img.freepik.com/free-photo/beef-cotlet-burger-with-sauce-wooden-board_114579-2600.jpg"
   },
   {
     id: "6",
@@ -61,6 +61,6 @@ export const menuItems: MenuItem[] = [
     price: 12.50,
     inventory: 10,
     category: "food",
-    image: "https://source.unsplash.com/MNtag_eXMKw/600x600"
+    image: "https://img.freepik.com/free-photo/pizza-pizza-filled-with-tomatoes-salami-olives_140725-1200.jpg"
   }
 ];

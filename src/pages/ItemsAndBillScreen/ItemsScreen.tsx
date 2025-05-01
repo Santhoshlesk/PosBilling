@@ -41,7 +41,7 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
 
   return (
     <div className="w-full lg:w-3/5 h-full flex flex-col">
-      <div className="flex flex-row justify-between items-center px-5 py-4">
+      <div className="flex flex-row justify-between items-center px-5 py-3">
         <div className="text-gray-800">
           <div className="font-bold text-xl">Sethu Raman G</div>
           <span className="text-xs">Location ID#SIMON123</span>
@@ -60,7 +60,7 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
         </div>
       </div>
 
-      <div className="flex flex-row px-5 overflow-x-auto py-4 gap-4">
+      <div className="flex px-5 overflow-x-auto py-3 gap-4">
         {categories.map((category) => (
           <span
             key={category.id}
@@ -76,7 +76,7 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5 overflow-y-auto flex-grow">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 px-5 overflow-y-auto flex-grow">
         {filteredItems.map((item) => (
           <ProductCard
             key={item.id}

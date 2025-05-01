@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { MenuItem, OrderItem } from "./types";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 interface BillScreenProps {
   orderItems: OrderItem[];
@@ -10,7 +10,6 @@ interface BillScreenProps {
 
 const BillScreen = ({ orderItems, setOrderItems }: BillScreenProps) => {
   const [showInvoice, setShowInvoice] = useState(false);
-  const { toast } = useToast();
 
   const handleIncrement = (item: OrderItem) => {
     const updatedItems = orderItems.map((orderItem) => {
@@ -18,10 +17,9 @@ const BillScreen = ({ orderItems, setOrderItems }: BillScreenProps) => {
         if (orderItem.quantity < orderItem.inventory) {
           return { ...orderItem, quantity: orderItem.quantity + 1 };
         }
-        toast({
-          variant: "destructive",
-          title: "Maximum stock reached",
+        toast.warning("Maximum stock reached",{
           description: `Only ${orderItem.inventory} ${orderItem.name} available`,
+          duration: 5000,
         });
         return orderItem;
       }
@@ -45,9 +43,9 @@ const BillScreen = ({ orderItems, setOrderItems }: BillScreenProps) => {
 
   const handleClearAll = () => {
     setOrderItems([]);
-    toast({
-      title: "Order cleared",
+    toast.success("Order cleared",{
       description: "All items have been removed from the order",
+      duration: 5000,
     });
   };
 
@@ -61,7 +59,7 @@ const BillScreen = ({ orderItems, setOrderItems }: BillScreenProps) => {
   };
 
   const subtotal = orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const discount = 5.00;
+  const discount = orderItems.length>0 ? 5.00:0;
   const tax = subtotal * 0.0638;
   const total = subtotal - discount + tax;
 
@@ -181,7 +179,7 @@ const BillScreen = ({ orderItems, setOrderItems }: BillScreenProps) => {
               </div>
               <div className="flex justify-between text-sm">
                 <span>Discount</span>
-                <span>-${discount.toFixed(2)}</span>
+                <span>{orderItems.length>0 ? '-':''}${discount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Sales Tax</span>

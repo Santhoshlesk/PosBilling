@@ -14,7 +14,7 @@ const ProductCard = ({ product, onAddToOrder }: ProductCardProps) => {
   const isLowStock = product.inventory <= 5 && product.inventory > 0;
 
   return (
-    <div className="group relative flex flex-col h-full overflow-hidden rounded-xl border bg-card transition-all duration-200 hover:shadow-lg animate-fade-in">
+    <div className="relative flex flex-col overflow-hidden rounded-xl border bg-card transition-all duration-200 hover:shadow-lg animate-fade-in">
       <div className="relative aspect-square overflow-hidden">
         <img
           src={product.image}
