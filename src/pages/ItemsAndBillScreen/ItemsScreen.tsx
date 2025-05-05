@@ -1,41 +1,82 @@
-import { useState } from "react";
-import { categories, menuItems } from "./data";
+import React, { useState } from "react";
 import { Category, MenuItem } from "./types";
 import ProductCard from "./components/ProductCard";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { Plus } from "lucide-react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 interface ItemsScreenProps {
   onAddToOrder: (item: MenuItem) => void;
 }
 
 const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
-  const [selectedCategory, setSelectedCategory] = useState<Category["id"]>("all");
+  const [selectedCategory, setSelectedCategory] =
+    useState<Category["id"]>("All Items");
   const [showAddProduct, setShowAddProduct] = useState(false);
-  const [newProduct, setNewProduct] = useState<Partial<MenuItem>>({
-    name: "",
-    weight: "",
-    price: 0,
-    inventory: 0,
-    category: "bakery",
-    image: ""
-  });
+
+  
+
+  const [menuItems, setMenuItems] = React.useState<MenuItem[]>([]);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<MenuItem>();
+
+  React.useEffect(() => {
+    axios
+      .get(import.meta.env.VITE_BASE_API_URL + "/products?select=*", {
+        headers: {
+          apikey:
+          import.meta.env.VITE_BASE_API_KEY,
+          Authorization:
+            `Bearer ${import.meta.env.VITE_BASE_AUTH_KEY}`,
+        },
+      })
+      .then((input) => {
+        const data = input.data as MenuItem[];
+        if (data) {
+          setMenuItems(data);
+        }
+      });
+  }, []);
+
+  
+
+  const categories=["All Items",...Array.from(new Set(menuItems.map(item=>item.category)))]
 
   const filteredItems = menuItems.filter(
-    (item) => selectedCategory === "all" || item.category === selectedCategory
+    (item) => selectedCategory === "All Items" || item.category === selectedCategory
   );
 
-  const handleAddProduct = () => {
-    console.log("Adding new product:", newProduct);
+  const handleAddProduct:SubmitHandler<MenuItem> = async (data:MenuItem) => {
     setShowAddProduct(false);
-    setNewProduct({
-      name: "",
-      weight: "",
-      price: 0,
-      inventory: 0,
-      category: "bakery",
-      image: ""
+    console.log(data);
+    
+    await axios
+    .post(import.meta.env.VITE_BASE_API_URL + "/products", data,{
+      headers: {
+        apikey:
+        import.meta.env.VITE_BASE_API_KEY,
+        Authorization:
+          `Bearer ${import.meta.env.VITE_BASE_AUTH_KEY}`,
+      },
+    })
+    .then((input) => {
+      if (input.status==201) {
+        reset()
+        setShowAddProduct(false);
+      }
     });
   };
 
@@ -43,14 +84,15 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
     <div className="w-full lg:w-3/5 h-full flex flex-col">
       <div className="flex flex-row justify-between items-center px-5 py-3">
         <div className="text-gray-800">
-          <div className="font-bold text-xl">Sethu Raman G</div>
+          <div className="font-bold text-xl">Santhosh Kumar A</div>
           <span className="text-xs">Location ID#SIMON123</span>
         </div>
         <div className="flex items-center gap-4">
           <button
             onClick={() => setShowAddProduct(true)}
-            className="px-4 py-2 bg-yellow-500 text-white font-semibold rounded hover:bg-yellow-600"
+            className="px-2 py-2 bg-yellow-500 text-white font-semibold rounded hover:bg-yellow-600 flex gap-1"
           >
+            <Plus />
             Add Product
           </button>
           <div className="text-sm text-center">
@@ -63,15 +105,15 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
       <div className="flex px-5 overflow-x-auto py-3 gap-4">
         {categories.map((category) => (
           <span
-            key={category.id}
+            key={category}
             className={`px-5 py-1 rounded-2xl text-sm cursor-pointer whitespace-nowrap ${
-              selectedCategory === category.id
+              selectedCategory === category
                 ? "bg-yellow-500 text-white"
                 : "font-semibold"
             }`}
-            onClick={() => setSelectedCategory(category.id)}
+            onClick={() => setSelectedCategory(category)}
           >
-            {category.name}
+            {category}
           </span>
         ))}
       </div>
@@ -91,51 +133,86 @@ const ItemsScreen = ({ onAddToOrder }: ItemsScreenProps) => {
           <DialogHeader>
             <DialogTitle>Add New Product</DialogTitle>
             <DialogDescription>
-              Fill in the product details below to add a new item to your inventory.
+              Fill in the product details below to add a new item to your
+              inventory.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit(handleAddProduct)} className="space-y-4">
             <div>
               <label className="text-sm font-medium">Name</label>
-              <Input
-                value={newProduct.name}
-                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-              />
+              <Input {...register("name", { required: "Name is required" })} />
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
             </div>
+
             <div>
               <label className="text-sm font-medium">Weight</label>
               <Input
-                value={newProduct.weight}
-                onChange={(e) => setNewProduct({ ...newProduct, weight: e.target.value })}
+                {...register("weight", { required: "Weight is required" })}
               />
+              {errors.weight && (
+                <p className="text-red-500 text-sm">{errors.weight.message}</p>
+              )}
+            </div>
+
+
+            <div>
+              <label className="text-sm font-medium">Category</label>
+              <Input
+                {...register("category", { required: "category is required" })}
+              />
+              {errors.weight && (
+                <p className="text-red-500 text-sm">{errors.weight.message}</p>
+              )}
             </div>
             <div>
               <label className="text-sm font-medium">Price</label>
               <Input
-                type="number"
-                value={newProduct.price}
-                onChange={(e) => setNewProduct({ ...newProduct, price: Number(e.target.value) })}
+                type="text"
+                {...register("price", {
+                  required: "Price is required",
+                  // valueAsNumber: true,
+                })}
               />
+              {errors.price && (
+                <p className="text-red-500 text-sm">{errors.price.message}</p>
+              )}
             </div>
+
             <div>
               <label className="text-sm font-medium">Initial Inventory</label>
               <Input
                 type="number"
-                value={newProduct.inventory}
-                onChange={(e) => setNewProduct({ ...newProduct, inventory: Number(e.target.value) })}
+                {...register("inventory", {
+                  required: "Inventory is required",
+                  valueAsNumber: true,
+                })}
               />
+              {errors.inventory && (
+                <p className="text-red-500 text-sm">
+                  {errors.inventory.message}
+                </p>
+              )}
             </div>
+
             <div>
               <label className="text-sm font-medium">Image URL</label>
               <Input
-                value={newProduct.image}
-                onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+                {...register("image", { required: "Image URL is required" })}
               />
+              {errors.image && (
+                <p className="text-red-500 text-sm">{errors.image.message}</p>
+              )}
             </div>
-            <Button onClick={handleAddProduct} className="w-full bg-primary hover:bg-primary/90">
+
+            <Button
+              type="submit"
+              className="w-full bg-primary hover:bg-primary/90"
+            >
               Add Product
             </Button>
-          </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

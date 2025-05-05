@@ -14,7 +14,7 @@ const ProductCard = ({ product, onAddToOrder }: ProductCardProps) => {
   const isLowStock = product.inventory <= 5 && product.inventory > 0;
 
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-xl border bg-card transition-all duration-200 hover:shadow-lg animate-fade-in">
+    <div className="flex flex-col max-h-72 overflow-hidden rounded-xl border bg-card transition-all duration-200 hover:shadow-lg animate-fade-in">
       <div className="relative aspect-square overflow-hidden">
         <img
           src={product.image}
@@ -66,7 +66,7 @@ const ProductCard = ({ product, onAddToOrder }: ProductCardProps) => {
         <div className="mt-auto flex items-center justify-between gap-2">
           <div className="flex flex-col">
             <span className="text-2xl font-bold text-primary">
-              ${product.price.toFixed(2)}
+              ₹{product.price.toFixed(2)}
             </span>
             <span className="text-sm text-muted-foreground">
               Stock: {product.inventory}
